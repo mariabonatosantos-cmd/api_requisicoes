@@ -38,6 +38,7 @@ app.post("/imc", (req, res) => {
         idade, 
         imc: imc.toFixed(2)
     })
+    
 })
 //final
 app.listen(port, () => {
