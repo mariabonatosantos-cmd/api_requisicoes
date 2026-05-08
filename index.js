@@ -32,11 +32,33 @@ app.post("/imc", (req, res) => {
        return res.status(404).json({erro: "Dados incompletos"}) 
     }
 
-    const imc = peso / (altura *altura);
+    const imc = peso / (altura * altura);
     res.json({
         nome, 
-        idade, 
+        idade,
         imc: imc.toFixed(2)
+    })
+    
+})
+//final
+app.listen(port, () => {
+    console.log(`Servidor rodando em http://localhost:${port}`)    
+})
+
+app.post("/imc", (req, res) => {
+    const {nota1, nota2} = req.body;
+
+    if(!nota1 || !nota2){
+       return res.status(404).json({erro: "Dados incompletos"}) 
+    }
+
+    const media = (nota1 + nota2);
+    res.json({
+        nome, 
+        idade,
+        nota1,
+        nota2, 
+        media: media.toFixed(2)
     })
     
 })
