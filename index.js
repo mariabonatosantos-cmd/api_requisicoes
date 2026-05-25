@@ -1,10 +1,12 @@
 const express = require('express');
 const fs = require('fs');
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
 
 app.use(express.json());
+app.use(cors());
 
 
 //http://localhost:3000/saudacao?nome=maria
@@ -46,16 +48,14 @@ app.listen(port, () => {
 })
 
 app.post("/media", (req, res) => {
-    const {nome, idade,nota1, nota2} = req.body;
+    const {nota1, nota2} = req.body;
 
-    if(!nome || !idade || !nota1 || !nota2){
+    if(!nota1 || !nota2){
        return res.status(404).json({erro: "Dados incompletos"}) 
     }
 
     const media = (parseFloat(nota1) + parseFloat(nota2))/ 2;
     res.json({
-        nome, 
-        idade,
         nota1,
         nota2, 
         mensagem: media >= 7 ? "Aprovado" : "Reprovado",
