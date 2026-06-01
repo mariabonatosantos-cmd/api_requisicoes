@@ -67,3 +67,25 @@ app.post("/media", (req, res) => {
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`)    
 })
+
+app.post("/login", (req, res) => {
+    const {email, senha} = req.body;
+
+    if(!email || !senha){
+        return res.status(404).json({erro: "Dados incompletos!"})
+    }
+
+
+
+       if (email === "admin@admin.com" && senha === "123456")
+       {
+        return res.json({
+            email,
+            senha,
+            token: "123456"
+        })
+       }
+         else {
+            return res.status(404).json({erro: "Credenciais inválidas!"})
+         }
+})
