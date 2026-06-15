@@ -27,18 +27,16 @@ app.get("/saudacao", (req, res)=>{
 
 })
 
-app.post("/imc", (req, res) => {
-    const {nome, idade, altura, peso} = req.body;
+app.post("/cadastrarCliente", (req, res) => {
+    const {nome, cpf, cep} = req.body;
 
-    if(!nome || !idade || !altura || !peso){
+    if(!nome || !cpf || !cep){
        return res.status(404).json({erro: "Dados incompletos"}) 
     }
-
-    const imc = peso / (altura * altura);
     res.json({
         nome, 
-        idade,
-        imc: imc.toFixed(2)
+        cpf,
+        cep
     })
     
 })
