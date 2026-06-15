@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 const port = 3000;
@@ -8,6 +9,10 @@ const port = 3000;
 app.use(express.json());
 app.use(cors());
 
+const clientesfile = path.join(__dirname, "clientes.json")
+function LerClientes() {
+    if(!)
+}
 
 //http://localhost:3000/saudacao?nome=maria
 app.get("/saudacao", (req, res)=>{
