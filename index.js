@@ -10,12 +10,24 @@ app.use(express.json());
 app.use(cors());
 
 const clientesfile = path.join(__dirname, "clientes.json")
-function SalvarCliente(clientes) {
+
+function salvarCliente(clientes) {
     fs.writeFileSync(clientesfile, JSON.stringify(clientes, null, 2), "utf8")
 }
 
 app.post("/clientes", (req, res) =>{
-    const {nome, cpf, cep, rua, cidade, estado, numero}= req
+    const {nome, cpf, cep, rua, cidade, estado, numero}= req.body;
+    if(!nome || !cpf || !cep){
+        return res.status(404).json({erro: "dados incompletos"})
+    }
+    const clientes = LerClientes();
+    if(clientes.some(c => c.cpf === cpf)){
+        return res.status(400).json({erro: "cliente já cadastrado"})
+    }
+    const novoCliente = {nome, cpf, cep, rua, cidade, estado, numero};
+    clientes.push(novoCliente);
+    salvarCliente(clientes);
+     return res.status(201).json({mensagem: "Cliente cadastrado com sucesso!"})
 })
 
 function LerClientes() {
