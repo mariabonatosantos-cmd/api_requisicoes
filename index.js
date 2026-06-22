@@ -12,7 +12,20 @@ app.use(cors());
 const clientesfile = path.join(__dirname, "clientes.json")
 
 function salvarCliente(clientes) {
-    fs.writeFileSync(clientesfile, JSON.stringify(clientes, null, 2), "utf8")
+    fs.writeFileSync(clientesfile, JSON.stringify(clientes, null, 2), "utf-8")
+}
+
+function LerClientes() {
+    if (!fs.existsSync(clientesfile)) {
+        return[];
+    }
+    const dados = fs.readFileSync(clientesfile, "utf-8")
+    try {
+        return  JSON.parse(dados) || [];
+    }
+    catch(e){
+        return [];
+    }
 }
 
 app.post("/clientes", (req, res) =>{
@@ -29,10 +42,6 @@ app.post("/clientes", (req, res) =>{
     salvarCliente(clientes);
      return res.status(201).json({mensagem: "Cliente cadastrado com sucesso!"})
 })
-
-function LerClientes() {
-    if (!fs.existsSync(clientesfile)) {
-    }}
 
 //http://localhost:3000/saudacao?nome=maria
 app.get("/saudacao", (req, res) => {
