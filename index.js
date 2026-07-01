@@ -42,6 +42,39 @@ app.post("/clientes", (req, res) =>{
     salvarCliente(clientes);
      return res.status(201).json({mensagem: "Cliente cadastrado com sucesso!"})
 })
+////
+app.post('/usuario',(req,res)=> {
+    const{nome,email,senha}=req.body;
+    if(!nome || !email || !senha){
+        return res.status(404).json({erro: "dados incompletos"})
+    }
+    const usuario= lerUsuario();
+    if(usuario.some(s => s.senha===senha )){
+        return res.status(400).json({erro:"usuario ja cadastrado"})
+    }
+    const novoUsuario={nome,email,senha,};
+    usuario.push(novoUsuario);
+    salvarUsuario(usuario);
+    return res.status(201).json({mensagem:"usuario cadastrado com sucesso"})
+})
+const usuarioFile=path.join(__dirname,"usuario.json")
+
+function salvarUsuario(usuario){
+    fs.writeFileSync(usuarioFile , JSON.stringify(usuario, null,2),"utf8")
+}
+
+function lerUsuario(){
+    if(!fs.existsSync(usuarioFile)){
+        return[];
+    }
+    const dados=fs.readFileSync(usuarioFile,'utf-8')
+    try{
+        return JSON.parse(dados) || [];
+    }
+    catch(e){
+             return []
+        }
+    }
 
 //http://localhost:3000/saudacao?nome=maria
 app.get("/saudacao", (req, res) => {
@@ -49,7 +82,7 @@ app.get("/saudacao", (req, res) => {
     if (!nome) {
         return res.status(404).json(
             {
-                erro: "Nome não foi informado"
+                erro: "Nome não informado"
             }
         )
     }
@@ -85,7 +118,7 @@ app.post("/media", (req, res) => {
     if (!nota1 || !nota2) {
         return res.status(404).json({ erro: "Dados incompletos" })
     }
-
+    
     const media = (parseFloat(nota1) + parseFloat(nota2)) / 2;
     res.json({
         nota1,
