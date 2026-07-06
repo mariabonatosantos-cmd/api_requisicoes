@@ -17,64 +17,65 @@ function salvarCliente(clientes) {
 
 function LerClientes() {
     if (!fs.existsSync(clientesfile)) {
-        return[];
+        return [];
     }
     const dados = fs.readFileSync(clientesfile, "utf-8")
     try {
-        return  JSON.parse(dados) || [];
+        return JSON.parse(dados) || [];
     }
-    catch(e){
+    catch (e) {
         return [];
     }
 }
 
-app.post("/clientes", (req, res) =>{
-    const {nome, cpf, cep, rua, cidade, estado, numero}= req.body;
-    if(!nome || !cpf || !cep){
-        return res.status(404).json({erro: "dados incompletos"})
+app.post("/clientes", (req, res) => {
+    const { nome, cpf, cep, rua, cidade, estado, numero } = req.body;
+    if (!nome || !cpf || !cep) {
+        return res.status(404).json({ erro: "dados incompletos" })
     }
     const clientes = LerClientes();
-    if(clientes.some(c => c.cpf === cpf)){
-        return res.status(400).json({erro: "cliente já cadastrado"})
+    if (clientes.some(c => c.cpf === cpf)) {
+        return res.status(400).json({ erro: "cliente já cadastrado" })
     }
-    const novoCliente = {nome, cpf, cep, rua, cidade, estado, numero};
+    const novoCliente = { nome, cpf, cep, rua, cidade, estado, numero };
     clientes.push(novoCliente);
     salvarCliente(clientes);
-     return res.status(201).json({mensagem: "Cliente cadastrado com sucesso!"})
+    return res.status(201).json({ mensagem: "Cliente cadastrado com sucesso!" })
 })
 ////
-app.post('/usuario',(req,res)=> {
-    const{nome,email,senha}=req.body;
-    if(!nome || !email || !senha){
-        return res.status(404).json({erro: "dados incompletos"})
+app.post('/usuarios', (req, res) => {
+    const { nome, email, senha } = req.body;
+    if (!nome || !email || !senha) {
+        return res.status(404).json({ erro: "dados incompletos" })
     }
-    const usuario= lerUsuario();
-    if(usuario.some(s => s.senha===senha )){
-        return res.status(400).json({erro:"usuario ja cadastrado"})
+    const usuario = lerUsuario();
+    if (usuario.some(s => s.senha === senha && s.email === email)) {
+        return res.status(400).json({ erro: "usuario ja cadastrado" })
     }
-    const novoUsuario={nome,email,senha,};
+    const novoUsuario = { nome, email, senha, };
     usuario.push(novoUsuario);
     salvarUsuario(usuario);
-    return res.status(201).json({mensagem:"usuario cadastrado com sucesso"})
+    return res.status(201).json({ mensagem: "usuario cadastrado com sucesso", token: "123456" })
 })
-const usuarioFile=path.join(__dirname,"usuario.json")
+const usuarioFile = path.join(__dirname, "usuario.json")
 
-function salvarUsuario(usuario){
-    fs.writeFileSync(usuarioFile , JSON.stringify(usuario, null,2),"utf8")
+function salvarUsuario(usuario) {
+    fs.writeFileSync(usuarioFile, JSON.stringify(usuario, null, 2), "utf8")
 }
 
-function lerUsuario(){
-    if(!fs.existsSync(usuarioFile)){
-        return[];
+function lerUsuario() {
+    if (!fs.existsSync(usuarioFile)) {
+        return [];
     }
-    const dados=fs.readFileSync(usuarioFile,'utf-8')
-    try{
+    const dados = fs.readFileSync(usuarioFile, 'utf-8')
+    try {
         return JSON.parse(dados) || [];
     }
-    catch(e){
-             return []
-        }
+    catch (e) {
+        return []
     }
+}
+
 
 //http://localhost:3000/saudacao?nome=maria
 app.get("/saudacao", (req, res) => {
@@ -107,10 +108,7 @@ app.post("/cadastrarCliente", (req, res) => {
     })
 
 })
-//final
-app.listen(port, () => {
-    console.log(`Servidor rodando em http://localhost:${port}`)
-})
+
 
 app.post("/media", (req, res) => {
     const { nota1, nota2 } = req.body;
@@ -118,7 +116,7 @@ app.post("/media", (req, res) => {
     if (!nota1 || !nota2) {
         return res.status(404).json({ erro: "Dados incompletos" })
     }
-    
+
     const media = (parseFloat(nota1) + parseFloat(nota2)) / 2;
     res.json({
         nota1,
@@ -128,10 +126,7 @@ app.post("/media", (req, res) => {
     })
 
 })
-//final
-app.listen(port, () => {
-    console.log(`Servidor rodando em http://localhost:${port}`)
-})
+
 
 app.post("/login", (req, res) => {
     const { email, senha } = req.body;
@@ -140,16 +135,20 @@ app.post("/login", (req, res) => {
         return res.status(404).json({ erro: "Dados incompletos!" })
     }
 
-
-
-    if (email === "admin@admin.com" && senha === "123456") {
+    const usuarios = lerUsuario();
+    const usuario = usuarios.find(u => u.email === email && u.senha === senha);
+    if (usuario) {
         return res.json({
-            email,
-            senha,
-            token: "123456"
+            email: usuario.email,
+            senha: usuario.senha,
+
         })
+    } else {
+        return res.status(401).json({ erro: "Usuário ou senha inválidos!" })
     }
-    else {
-        return res.status(404).json({ erro: "Credenciais inválidas!" })
-    }
+})
+
+//final
+app.listen(port, () => {
+    console.log(`Servidor rodando em http://localhost:${port}`)
 })
