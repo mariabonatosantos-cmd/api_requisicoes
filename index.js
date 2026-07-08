@@ -139,8 +139,9 @@ app.post("/login", (req, res) => {
     const usuario = usuarios.find(u => u.email === email && u.senha === senha);
     if (usuario) {
         return res.json({
-            email: usuario.email,
-            senha: usuario.senha,
+            mensagem: "Login realizado com sucesso!",
+            token: "123456"
+
 
         })
     } else {
